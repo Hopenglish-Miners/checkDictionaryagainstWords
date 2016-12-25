@@ -79,17 +79,17 @@ def outputuserjson (usrtxt,missedUcount,foundUcount,foundUWords):
     usrtxt['missedwords']=missedUcount
     usrtxt['categorieswithcount']=foundUWords
 
-def outputvideojson (videotxt,missedcount,foundcount,foundUWords):
-    usrtxt['foundwords']=foundcount
-    usrtxt['missedwords']=missedcount
-    usrtxt['categorieswithcount']=foundWords 
+def outputvideojson (videotxt,missedcount,foundcount,foundWords):
+    videotxt['foundwords']=foundcount
+    videotxt['missedwords']=missedcount
+    videotxt['categorieswithcount']=foundWords
 
 
 wordListFile = open('filteredWords.json')
 wordJson     = json.load(wordListFile)
 userListFile = open('student_filteredWords.json')
 userWordsJson= json.load(userListFile)
-dictionaryFile = open('dummydict.json')
+dictionaryFile = open('dictionary.json')
 dictionary     = json.load(dictionaryFile)
 
 wordlist    =   [] #words from video files
@@ -115,9 +115,9 @@ print("information based on video words: ")
 print(videotxt)
 print("information based on user dictionaries: ")
 print(usrtxt)
-#videostats = open('videostats.json','w')
-#userstats = open('userstats.json','w')
-#json.dump(videostats,videotxt)
-#json.dump(userstats,usrtxt)
-#videostats.close()
-#userstats.close()
+videostats = open('videostats.json','w')
+userstats = open('userstats.json','w')
+json.dump(videotxt,videostats)
+json.dump(usrtxt,userstats)
+videostats.close()
+userstats.close()
