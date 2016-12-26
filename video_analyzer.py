@@ -14,8 +14,8 @@ class VideoAnalyzer:
         print("Removing duplicated words")
         self.__unique_words = self.__remove_duplicates(self.__wordList)
         print("Creating words to categories dictionary")
-        self.__words_categories_dict = self.__map_video_words(self.__unique_words)
-        # self.__words_categories_dict = self.read_file('out/words_to_categories.json')
+        #self.__words_categories_dict = self.__map_video_words(self.__unique_words)
+        self.__words_categories_dict = self.read_file('out/words_to_categories.json')
         self.__videos_per_category_dic = {}
 
         self.__video_processed = {}
@@ -75,6 +75,9 @@ class VideoAnalyzer:
             # remove repeated
             # video_cat = self.__remove_duplicates(video_cat)
 
+            # remove lower than mean
+            video_cat = self.remove_above_avg(video_cat)
+
             if len(video_cat) == 0:
                 self.__total_videos_no_categorized += 1
             else:
@@ -93,6 +96,24 @@ class VideoAnalyzer:
             }
             result.append(obj)
         self.__video_processed = result
+
+    def remove_above_avg(self,categories):
+        total = 0
+        for cat in categories:
+            total += categories[cat]
+        avg = total/len(categories)
+
+        # remove lower than avg
+        remove_keys = []
+        for cat in categories:
+            if categories[cat] < avg:
+                remove_keys.append(cat)
+
+        for key in remove_keys:
+            categories.pop(key,None)
+
+        return categories
+
 
     def __add_video_to_categories(self,categories,full_object):
         for cat in categories:
