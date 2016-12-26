@@ -76,7 +76,9 @@ class VideoAnalyzer:
             # video_cat = self.__remove_duplicates(video_cat)
 
             # remove lower than mean
+            total_cat_before_clean = len(video_cat)
             video_cat = self.remove_above_avg(video_cat)
+            print("before: ",total_cat_before_clean," ; After: ", len(video_cat))
 
             if len(video_cat) == 0:
                 self.__total_videos_no_categorized += 1
@@ -91,7 +93,8 @@ class VideoAnalyzer:
                 "total_words" : total_words,
                 "total_words_found" : total_found,
                 "total_words_missed" : total_missed,
-                "total_categories" : len(video_cat),
+                "total_categories_before_clean" : total_cat_before_clean,
+                "total_categories_after_clean" : len(video_cat),
                 "categories" : video_cat
             }
             result.append(obj)
