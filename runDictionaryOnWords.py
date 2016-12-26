@@ -8,11 +8,16 @@ number of words being categorized in total and words not categorized.
 we also need to generate a word frequency key value pair so we can generate graphs.
 """""
 import json
+from video_analyzer import VideoAnalyzer
 
 # Directories Needed to run the Script
 DIR_FILTERED_WORDS = 'in/filteredWords.json'
 DIR_STUDENT_FILTEREDWORDS = 'in/student_filteredWords.json'
 DIR_DICTIONARY = 'in/myvocabulary_categories.json'
+
+# Output Directories
+DIR_OUT_VIDEO_STATS = 'out/videostats.json'
+DIR_OUT_USER_STATS = 'out/userstats.json'
 
 def getWordsFromVideoFile (videotxtfile):
         for i in range(0, len(videotxtfile)):
@@ -110,19 +115,36 @@ foundUWords  =  {} #User list of categories and how many times they were found,
                    #needed to genrate distribution of words.
 usrtxt       =  {}
 
-getWordsFromVideoFile(wordJson)
-getWordsFromUserFile(userWordsJson) #takes long to execute, may need to enable multi threading
-compareVideoWordsWithDict(wordlist,dictionary,foundWords)
-compareUserWordsWithDict(userwordslist,dictionary,foundUWords)
-outputvideojson(videotxt,missedcount,foundcount,foundWords)
-outputuserjson(usrtxt,missedUcount,foundUcount,foundUWords)
-print("information based on video words: ")
-print(videotxt)
-print("information based on user dictionaries: ")
-print(usrtxt)
-videostats = open('out/videostats.json','w')
-userstats = open('out/userstats.json','w')
-json.dump(videotxt,videostats)
-json.dump(usrtxt,userstats)
-videostats.close()
-userstats.close()
+
+v_analyzer = VideoAnalyzer(wordJson,dictionary)
+print("----- Process Video -----")
+# print("      Total videos: " , v_analyzer.total_videos())
+# print("  Total categories: " , v_analyzer.total_categories())
+# print("       Total words: " , v_analyzer.total_words())
+# print("Total unique words: " , v_analyzer.total_unique_words())
+v_analyzer.process_videos()
+v_analyzer.save_summary('out/video_stats.json')
+v_analyzer.save_words_to_categories('out/words_to_categories.json')
+
+
+# Comparing video file
+# getWordsFromVideoFile(wordJson)
+# compareVideoWordsWithDict(wordlist,dictionary,foundWords)
+# outputvideojson(videotxt,missedcount,foundcount,foundWords)
+# print("information based on video words: ")
+# print(videotxt)
+#
+# # Save into file
+# videostats = open(DIR_OUT_VIDEO_STATS,'w')
+# json.dump(videotxt,videostats)
+# videostats.close()
+
+# Comparing users file
+# getWordsFromUserFile(userWordsJson) #takes long to execute, may need to enable multi threading
+# compareUserWordsWithDict(userwordslist,dictionary,foundUWords)
+# outputuserjson(usrtxt,missedUcount,foundUcount,foundUWords)
+# print("information based on user dictionaries: ")
+# print(usrtxt)
+# userstats = open(DIR_OUT_USER_STATS,'w')
+# json.dump(usrtxt,userstats)
+# userstats.close()
