@@ -14,7 +14,8 @@ class VideoAnalyzer:
         print("Removing duplicated words")
         self.__unique_words = self.__remove_duplicates(self.__wordList)
         print("Creating words to categories dictionary")
-        self.__words_categories_dict = self.__map_video_words(self.__unique_words)
+        # self.__words_categories_dict = self.__map_video_words(self.__unique_words)
+        self.__words_categories_dict = self.read_file('out/words_to_categories.json')
         self.__videos_per_category_dic = {}
 
         self.__video_processed = {}
@@ -61,17 +62,18 @@ class VideoAnalyzer:
             total_found = 0
             total_missed = 0
             # Get categories
-            video_cat = []
+            video_cat = {}
             for word in v["wordList"]:
                 cats = self.get_categories(word)
                 if len(cats) > 0:
-                    video_cat.extend(self.get_categories(word))
+                    video_cat = self.__add_video_to_categories(cats,video_cat)
+                    # video_cat.extend(self.get_categories(word))
                     total_found += 1
                 else:
                     total_missed += 1
 
             # remove repeated
-            video_cat = self.__remove_duplicates(video_cat)
+            # video_cat = self.__remove_duplicates(video_cat)
 
             if len(video_cat) == 0:
                 self.__total_videos_no_categorized += 1
@@ -79,7 +81,7 @@ class VideoAnalyzer:
                 self.__total_videos_categorized += 1
 
             # add video to category
-            self.__add_video_to_categories(video_cat)
+            self.__videos_per_category_dic = self.__add_video_to_categories(video_cat,self.__videos_per_category_dic)
 
             obj = {
                 "postId" : v["postId"],
@@ -92,12 +94,16 @@ class VideoAnalyzer:
             result.append(obj)
         self.__video_processed = result
 
-    def __add_video_to_categories(self,categories):
+    def __add_video_to_categories(self,categories,full_object):
         for cat in categories:
-            if cat in self.__videos_per_category_dic:
-                self.__videos_per_category_dic[cat] += 1
+            if len(full_object) > 0:
+                if cat in full_object:
+                    full_object[cat] += 1
+                else:
+                    full_object[cat] = 1
             else:
-                self.__videos_per_category_dic[cat] = 1
+                full_object[cat] = 1
+        return full_object
 
     def summary(self):
         return {
@@ -118,7 +124,7 @@ class VideoAnalyzer:
             json.dump(self.words_dictionary(),fp)
 
     def read_file(self,path):
-        with open(file) as data_file:
+        with open(path) as data_file:
             data = json.load(data_file)
         return data
 
@@ -137,6 +143,7 @@ class VideoAnalyzer:
             return result[0:1]
         else:
             return result
+        return result
 
     # Private methods
 
