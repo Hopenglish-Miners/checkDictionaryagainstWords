@@ -14,8 +14,8 @@ class VideoAnalyzer:
         print("Removing duplicated words")
         self.__unique_words = self.__remove_duplicates(self.__wordList)
         print("Creating words to categories dictionary")
-        # self.__words_categories_dict = self.__map_video_words(self.__unique_words)
-        self.__words_categories_dict = self.read_file('out/words_to_categories.json')
+        self.__words_categories_dict = self.__map_video_words(self.__unique_words)
+        # self.__words_categories_dict = self.read_file('out/words_to_categories.json')
         self.__videos_per_category_dic = {}
 
         self.__video_processed = {}
@@ -139,10 +139,10 @@ class VideoAnalyzer:
                 if any(word in s for s in words):
                     result.append(category)
 
-        if len(result) > 0:
-            return result[0:1]
-        else:
-            return result
+        # if len(result) > 0:
+        #     return result[0:1]
+        # else:
+        #     return result
         return result
 
     # Private methods
